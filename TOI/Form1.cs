@@ -54,7 +54,7 @@ namespace DownloadManager
         int DownloadCount = 0;
         private void DownloadInQueue()
         {
-            int LocalDownloadCount=-1;       
+            int LocalDownloadCount = -1;
             //thrDisplayPageNames = new Thread(DisplayPageNames);
             //thrDisplayPageNames.Start();
             DisplayPageNames();
@@ -78,14 +78,14 @@ namespace DownloadManager
                     SetFileURL(DownloadCount + 1);
                     SetSavePath();
                     this.Invoke(new UpdateProgessCallback(this.UpdateProgress), new object[] { 0, 1 });
-                    this.Invoke(new DisplayFileNameCallback(this.DisplayFileName), new object[] { false});
+                    this.Invoke(new DisplayFileNameCallback(this.DisplayFileName), new object[] { false });
                     // Create a new thread that calls the Download() method
                     thrDownload = new Thread(Download);
                     // Start the thread, and thus call Download()
                     thrDownload.Start();
                 }
-            }                   
-                    
+            }
+
         }
         string strPDFFileToDownLoad = string.Empty;
         private void SetFileURL(int SeqNum)
@@ -103,11 +103,11 @@ namespace DownloadManager
             strPDFFileToDownLoad = "TOIBG_" + DateTime.Now.Year + "_" + DateTime.Now.Month + "_" + DateTime.Now.Day + "_" + SeqNum + ".pdf";
             strURL = @"http://epaper.timesofindia.com/Repository/TOIBG/" + DateTime.Now.Year + "/" +
                 twodigitmonth + "/" + twodigitday + "/" + strPDFFileToDownLoad;
-            strPDFFileToDownLoad=string.Empty;
+            strPDFFileToDownLoad = string.Empty;
             return strURL;
         }
         private void SetSavePath()
-        {            
+        {
             if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + @"\TOI"))
             {
                 Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + @"\TOI");
@@ -121,12 +121,12 @@ namespace DownloadManager
             // Make progress on the progress bar
             prgDownload.Value = PercentProgress;
             // Display the current progress on the form
-            lblProgress.Text = "Downloaded Page" + (DownloadCount+1).ToString() + " " + BytesRead + " out of " + TotalBytes + " (" + PercentProgress + "%)";
+            lblProgress.Text = "Downloaded Page" + (DownloadCount + 1).ToString() + " " + BytesRead + " out of " + TotalBytes + " (" + PercentProgress + "%)";
         }
         void DisplayFileName(bool clear)
         {
             // Let the user know we are connecting to the server
-            if(clear)
+            if (clear)
                 lblProgress.Text = "You got all the pages!";
             else
                 lblProgress.Text = "Getting Page " + (DownloadCount + 1).ToString();
@@ -134,7 +134,7 @@ namespace DownloadManager
         void DisplayLinkLabel(string FilePath, int DownloadCount)
         {
             LinkLabel PageName = new LinkLabel();
-            Label lblTemp = this.Controls[(DownloadCount + 1).ToString()]!=null?(Label)this.Controls[(DownloadCount + 1).ToString()]:null;
+            Label lblTemp = this.Controls[(DownloadCount + 1).ToString()] != null ? (Label)this.Controls[(DownloadCount + 1).ToString()] : null;
             if (lblTemp != null)
             {
                 PageName.Text = (DownloadCount + 1).ToString();
@@ -151,78 +151,78 @@ namespace DownloadManager
         {
             LinkLabel objLinkLabel = (LinkLabel)sender;
             System.Diagnostics.Process.Start(objLinkLabel.Name);
-        }    
+        }
         void DisplayPageNames()
         {
-             Label PageName;
-             int LocalDownloadCount=-1;
-             int LocationX=0;
-             int LocationY = 40;
-             int DownloadCountLocal=0;
-             long fileSizeLocal=0;
-             try
-             {
-                 while (DownloadCountLocal >= 0)
-                 {
-                     if (fileSizeLocal == -1)
-                     {
-                         fileSizeLocal = 0;
-                         break;
-                     }
-                     if (LocalDownloadCount != DownloadCountLocal)
-                     {
-                         fileSizeLocal = 0;
-                         LocalDownloadCount = DownloadCountLocal;
-                         webRequest = (HttpWebRequest)WebRequest.Create(GetFileURL(DownloadCountLocal + 1));
-                         // Set default authentication for retrieving the file
-                         webRequest.Credentials = CredentialCache.DefaultCredentials;
-                         // Retrieve the response from the server
-                         webResponse = (HttpWebResponse)webRequest.GetResponse();
-                         // Ask the server for the file size and store it
-                         fileSizeLocal = webResponse.ContentLength;
-                         webResponse.Close();
-                         if (fileSizeLocal > 0)
-                         {
-                             PageName = new Label();
-                             PageName.Name = (DownloadCountLocal + 1).ToString();
-                             PageName.BorderStyle = BorderStyle.FixedSingle;
-                             PageName.TextAlign = ContentAlignment.MiddleLeft;
-                             if ((DownloadCountLocal + 1) > 9)
-                                 PageName.Width = 25;
-                             else
-                                 PageName.Width = 20;
-                             PageName.Text = (DownloadCountLocal + 1).ToString();
-                             //if (DownloadCountLocal > 0)
-                             //    PageName.Text = ", " + PageName.Text;
-                             if (((DownloadCountLocal + 1) > 9)&&(LocationX>0))
-                                 LocationX += 25;
-                             else
-                                 LocationX += 20;
+            Label PageName;
+            int LocalDownloadCount = -1;
+            int LocationX = 0;
+            int LocationY = 40;
+            int DownloadCountLocal = 0;
+            long fileSizeLocal = 0;
+            try
+            {
+                while (DownloadCountLocal >= 0)
+                {
+                    if (fileSizeLocal == -1)
+                    {
+                        fileSizeLocal = 0;
+                        break;
+                    }
+                    if (LocalDownloadCount != DownloadCountLocal)
+                    {
+                        fileSizeLocal = 0;
+                        LocalDownloadCount = DownloadCountLocal;
+                        webRequest = (HttpWebRequest)WebRequest.Create(GetFileURL(DownloadCountLocal + 1));
+                        // Set default authentication for retrieving the file
+                        webRequest.Credentials = CredentialCache.DefaultCredentials;
+                        // Retrieve the response from the server
+                        webResponse = (HttpWebResponse)webRequest.GetResponse();
+                        // Ask the server for the file size and store it
+                        fileSizeLocal = webResponse.ContentLength;
+                        webResponse.Close();
+                        if (fileSizeLocal > 0)
+                        {
+                            PageName = new Label();
+                            PageName.Name = (DownloadCountLocal + 1).ToString();
+                            PageName.BorderStyle = BorderStyle.FixedSingle;
+                            PageName.TextAlign = ContentAlignment.MiddleLeft;
+                            if ((DownloadCountLocal + 1) > 9)
+                                PageName.Width = 25;
+                            else
+                                PageName.Width = 20;
+                            PageName.Text = (DownloadCountLocal + 1).ToString();
+                            //if (DownloadCountLocal > 0)
+                            //    PageName.Text = ", " + PageName.Text;
+                            if (((DownloadCountLocal + 1) > 9) && (LocationX > 0))
+                                LocationX += 25;
+                            else
+                                LocationX += 20;
 
 
-                             PageName.Location = new Point(LocationX, LocationY);
-                             // Invoke the method that updates the form's label and progress bar
-                             this.Invoke(new AddControlCallback(this.AddControl), new object[] { this, PageName });
-                             //this.Controls.Add(PageName);
+                            PageName.Location = new Point(LocationX, LocationY);
+                            // Invoke the method that updates the form's label and progress bar
+                            this.Invoke(new AddControlCallback(this.AddControl), new object[] { this, PageName });
+                            //this.Controls.Add(PageName);
 
-                             DownloadCountLocal++;
-                             if (DownloadCountLocal % 9 == 0)
-                             {
-                                 LocationX = 0;
-                                 LocationY += 20;
-                             }
-                         }
-                         else
-                             fileSizeLocal = -1;
-                     }
-                 }
-             }
-             catch (Exception ex)
-             {
-                 DownloadCountLocal = 0;
-             }
+                            DownloadCountLocal++;
+                            if (DownloadCountLocal % 9 == 0)
+                            {
+                                LocationX = 0;
+                                LocationY += 20;
+                            }
+                        }
+                        else
+                            fileSizeLocal = -1;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                DownloadCountLocal = 0;
+            }
         }
-        void AddControl(Control parent,Control ctrl)
+        void AddControl(Control parent, Control ctrl)
         {
             parent.Controls.Add(ctrl);
         }
@@ -272,13 +272,13 @@ namespace DownloadManager
                 }
                 finally
                 {
-                    if(webResponse.StatusCode== HttpStatusCode.OK)
+                    if (webResponse.StatusCode == HttpStatusCode.OK)
                         webResponse.Close();
                     if (strResponse != null)
                     {
                         // When the above code has ended, close the streams
                         strResponse.Close();
-                        strLocal.Close();                        
+                        strLocal.Close();
                     }
                     if (fileSize == 0)
                     {
@@ -310,7 +310,7 @@ namespace DownloadManager
             // Create a new thread that calls the DownloadInQueue() method
             thrSequencer = new Thread(DownloadInQueue);
             // Start the thread, and thus call DownloadInQueue()
-            thrSequencer.Start();            
+            thrSequencer.Start();
         }
     }
 }
