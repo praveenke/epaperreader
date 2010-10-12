@@ -18,7 +18,7 @@ namespace DownloadManager
         // The thread inside which the sequencing happens
         private Thread thrSequencer;
         // The thread inside which the download happens
-        private Thread thrDownload;
+        private Thread thrDownload;        
         // The stream of data retrieved from the web server
         private Stream strResponse;
         // The stream of data that we write to the harddrive
@@ -34,9 +34,11 @@ namespace DownloadManager
         private delegate void DisplayFileNameCallback(bool clear);
         private delegate void AddControlCallback(Control parent, Control ctrl);
         private delegate void DisplayLinkLabelCallback(string FilePath, int DownloadCount);
+        private delegate void UpdateTextBoxCallback(string text);
         string strURL = string.Empty;
         string strPath = string.Empty;
         bool tmp = false;
+        bool blnDisplayPagesDone = false;
 
         public Form1()
         {
@@ -54,38 +56,62 @@ namespace DownloadManager
         int DownloadCount = 0;
         private void DownloadInQueue()
         {
+            
             int LocalDownloadCount = -1;
             //thrDisplayPageNames = new Thread(DisplayPageNames);
             //thrDisplayPageNames.Start();
-            DisplayPageNames();
-            while (DownloadCount >= 0)
+            //DisplayPageNames();
+
+            try
             {
-                if (tmp == true)
+                while (DownloadCount >= 0)
                 {
-                    tmp = false;
-                }
-                if (fileSize == -1)
-                {
-                    this.Invoke(new DisplayFileNameCallback(this.DisplayFileName), new object[] { true });
-                    thrDownload.Abort();
-                    thrSequencer.Abort();
-                    break;
-                }
-                if (LocalDownloadCount != DownloadCount)
-                {
-                    fileSize = 0;
-                    LocalDownloadCount = DownloadCount;
-                    SetFileURL(DownloadCount + 1);
-                    SetSavePath();
-                    this.Invoke(new UpdateProgessCallback(this.UpdateProgress), new object[] { 0, 1 });
-                    this.Invoke(new DisplayFileNameCallback(this.DisplayFileName), new object[] { false });
-                    // Create a new thread that calls the Download() method
-                    thrDownload = new Thread(Download);
-                    // Start the thread, and thus call Download()
-                    thrDownload.Start();
+                    //this.Invoke(new UpdateTextBoxCallback(this.UpdateTextBox), new object[] { "chk" + (DownloadCount + 1).ToString() });
+                    CheckBox chkTemp = this.Controls["chk" + (DownloadCount + 1).ToString()] != null ? (CheckBox)this.Controls["chk" + (DownloadCount + 1).ToString()] : null;
+                    if ((chkTemp != null) && (chkTemp.Checked == false))
+                    {
+                        LocalDownloadCount = DownloadCount;
+                        DownloadCount++;
+                        continue;
+                    }
+                    else
+                    {
+                        if (tmp == true)
+                        {
+                            tmp = false;
+                        }
+                        if (fileSize == -1)
+                        {
+                            this.Invoke(new DisplayFileNameCallback(this.DisplayFileName), new object[] { true });
+                            //thrDownload.Abort();
+                            break;                   
+                        }
+                        if (LocalDownloadCount != DownloadCount)
+                        {
+                            fileSize = 0;
+                            LocalDownloadCount = DownloadCount;
+                            SetFileURL(DownloadCount + 1);
+                            SetSavePath();
+                            this.Invoke(new UpdateProgessCallback(this.UpdateProgress), new object[] { 0, 1 });
+                            this.Invoke(new DisplayFileNameCallback(this.DisplayFileName), new object[] { false });
+                            // Create a new thread that calls the Download() method
+                            //--thrDownload = new Thread(Download);
+                            // Start the thread, and thus call Download()
+                            //--thrDownload.Start();
+                            Download();
+                        }
+                    }
                 }
             }
+            catch (Exception Ex)
+            {
 
+            }
+            finally
+            {
+                //button1.Enabled = true;
+                thrSequencer.Abort();                
+            }
         }
         string strPDFFileToDownLoad = string.Empty;
         private void SetFileURL(int SeqNum)
@@ -127,7 +153,7 @@ namespace DownloadManager
         {
             // Let the user know we are connecting to the server
             if (clear)
-                lblProgress.Text = "You got all the pages!";
+                lblProgress.Text = "You got the pages!";
             else
                 lblProgress.Text = "Getting Page " + (DownloadCount + 1).ToString();
         }
@@ -155,11 +181,17 @@ namespace DownloadManager
         void DisplayPageNames()
         {
             Label PageName;
+            CheckBox ChkPageName;
             int LocalDownloadCount = -1;
             int LocationX = 0;
             int LocationY = 40;
             int DownloadCountLocal = 0;
             long fileSizeLocal = 0;
+            bool PagesFileExists = false;
+            int StoredPageNo = 0;
+            PagesFileExists = File.Exists("PagesOf" + DateTime.Now.Day + " - " + DateTime.Now.Month + " - " + DateTime.Now.Year + ".Txt");
+            if (PagesFileExists)
+                StoredPageNo = Convert.ToInt32(File.ReadAllLines("PagesOf" + DateTime.Now.Day + " - " + DateTime.Now.Month + " - " + DateTime.Now.Year + ".Txt")[0].ToString().Trim());
             try
             {
                 while (DownloadCountLocal >= 0)
@@ -169,47 +201,62 @@ namespace DownloadManager
                         fileSizeLocal = 0;
                         break;
                     }
+                    if ((PagesFileExists) && (StoredPageNo == DownloadCountLocal))
+                        break;
                     if (LocalDownloadCount != DownloadCountLocal)
                     {
                         fileSizeLocal = 0;
                         LocalDownloadCount = DownloadCountLocal;
-                        webRequest = (HttpWebRequest)WebRequest.Create(GetFileURL(DownloadCountLocal + 1));
-                        // Set default authentication for retrieving the file
-                        webRequest.Credentials = CredentialCache.DefaultCredentials;
-                        // Retrieve the response from the server
-                        webResponse = (HttpWebResponse)webRequest.GetResponse();
-                        // Ask the server for the file size and store it
-                        fileSizeLocal = webResponse.ContentLength;
-                        webResponse.Close();
-                        if (fileSizeLocal > 0)
+                        if (!PagesFileExists)
+                        {
+                            webRequest = (HttpWebRequest)WebRequest.Create(GetFileURL(DownloadCountLocal + 1));
+                            // Set default authentication for retrieving the file
+                            webRequest.Credentials = CredentialCache.DefaultCredentials;
+                            // Retrieve the response from the server
+                            webResponse = (HttpWebResponse)webRequest.GetResponse();
+                            // Ask the server for the file size and store it
+                            fileSizeLocal = webResponse.ContentLength;
+                            webResponse.Close();
+                        }
+                        if ((fileSizeLocal > 0)||(PagesFileExists))
                         {
                             PageName = new Label();
+                            ChkPageName = new CheckBox();
                             PageName.Name = (DownloadCountLocal + 1).ToString();
                             PageName.BorderStyle = BorderStyle.FixedSingle;
                             PageName.TextAlign = ContentAlignment.MiddleLeft;
+                            ChkPageName.Name = "chk" + (DownloadCountLocal + 1).ToString();
+                            
                             if ((DownloadCountLocal + 1) > 9)
+                            {
                                 PageName.Width = 25;
+                                ChkPageName.Width = 20;
+                            }
                             else
+                            {
                                 PageName.Width = 20;
+                                ChkPageName.Width = 20;
+                            }
                             PageName.Text = (DownloadCountLocal + 1).ToString();
                             //if (DownloadCountLocal > 0)
                             //    PageName.Text = ", " + PageName.Text;
                             if (((DownloadCountLocal + 1) > 9) && (LocationX > 0))
-                                LocationX += 25;
+                                LocationX += 50;
                             else
-                                LocationX += 20;
-
+                                LocationX += 45;
 
                             PageName.Location = new Point(LocationX, LocationY);
+                            ChkPageName.Location = new Point(LocationX + 25, LocationY);
                             // Invoke the method that updates the form's label and progress bar
                             this.Invoke(new AddControlCallback(this.AddControl), new object[] { this, PageName });
+                            this.Invoke(new AddControlCallback(this.AddControl), new object[] { this, ChkPageName });
                             //this.Controls.Add(PageName);
 
                             DownloadCountLocal++;
                             if (DownloadCountLocal % 9 == 0)
                             {
                                 LocationX = 0;
-                                LocationY += 20;
+                                LocationY += 30;
                             }
                         }
                         else
@@ -221,6 +268,13 @@ namespace DownloadManager
             {
                 DownloadCountLocal = 0;
             }
+            finally
+            {
+                if(!PagesFileExists)
+                    File.WriteAllLines("PagesOf"+DateTime.Now.Day+" - "+DateTime.Now.Month+" - "+DateTime.Now.Year+".Txt", (LocalDownloadCount).ToString().Split(".".ToCharArray()));
+                thrDisplayPageNames.Abort();
+            }
+            
         }
         void AddControl(Control parent, Control ctrl)
         {
@@ -307,10 +361,30 @@ namespace DownloadManager
         ArrayList arrswfFiles = new ArrayList();
         private void Form1_Load(object sender, EventArgs e)
         {
-            // Create a new thread that calls the DownloadInQueue() method
+            thrDisplayPageNames = new Thread(DisplayPageNames);
+            thrDisplayPageNames.Start();           
+            
+            //// Create a new thread that calls the DownloadInQueue() method            
+            //thrSequencer = new Thread(DownloadInQueue);
+            //// Start the thread, and thus call DownloadInQueue()
+            //thrSequencer.Start();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = "";
+            DownloadCount = 0;
+            fileSize = 0;
+            //DownloadInQueue();
+            // Create a new thread that calls the DownloadInQueue() method            
             thrSequencer = new Thread(DownloadInQueue);
             // Start the thread, and thus call DownloadInQueue()
             thrSequencer.Start();
+            //button1.Enabled = false;
+        }
+        private void UpdateTextBox(string text)
+        {
+            this.textBox1.Text = textBox1.Text + " " + text;
         }
     }
 }
