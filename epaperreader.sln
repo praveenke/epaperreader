@@ -19,9 +19,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlParser", "HtmlParser\Ht
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eMAT", "MAT\eMAT.csproj", "{C6E60E3C-9869-4E20-BE91-C285BE80BF80}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 4
+		SccNumberOfProjects = 5
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/TFS08
 		SccLocalPath0 = .
@@ -34,24 +40,31 @@ Global
 		SccProjectUniqueName3 = HtmlParser\\HtmlParser.csproj
 		SccProjectName3 = HtmlParser
 		SccLocalPath3 = HtmlParser
+		SccProjectUniqueName4 = MAT\\eMAT.csproj
+		SccProjectName4 = MAT
+		SccLocalPath4 = MAT
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3ED6D76A-67F8-4F77-BB1C-CEA09786ABF0}.Debug|Any CPU.ActiveCfg = Release|Any CPU
-		{3ED6D76A-67F8-4F77-BB1C-CEA09786ABF0}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{3ED6D76A-67F8-4F77-BB1C-CEA09786ABF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3ED6D76A-67F8-4F77-BB1C-CEA09786ABF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3ED6D76A-67F8-4F77-BB1C-CEA09786ABF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3ED6D76A-67F8-4F77-BB1C-CEA09786ABF0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2E2F67C6-8492-4034-A142-50872504D86D}.Debug|Any CPU.ActiveCfg = Release|Any CPU
-		{2E2F67C6-8492-4034-A142-50872504D86D}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{2E2F67C6-8492-4034-A142-50872504D86D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E2F67C6-8492-4034-A142-50872504D86D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E2F67C6-8492-4034-A142-50872504D86D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E2F67C6-8492-4034-A142-50872504D86D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{470C94A2-A301-4C1A-9123-679ADF6457C3}.Debug|Any CPU.ActiveCfg = Release|Any CPU
-		{470C94A2-A301-4C1A-9123-679ADF6457C3}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{470C94A2-A301-4C1A-9123-679ADF6457C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{470C94A2-A301-4C1A-9123-679ADF6457C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{470C94A2-A301-4C1A-9123-679ADF6457C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{470C94A2-A301-4C1A-9123-679ADF6457C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6E60E3C-9869-4E20-BE91-C285BE80BF80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6E60E3C-9869-4E20-BE91-C285BE80BF80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6E60E3C-9869-4E20-BE91-C285BE80BF80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6E60E3C-9869-4E20-BE91-C285BE80BF80}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
