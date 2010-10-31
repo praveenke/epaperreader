@@ -12,7 +12,7 @@ using System.Collections;
 using HtmlParser;
 namespace DownloadManager
 {
-    public partial class Form3 : Form
+    public partial class eMat : Form
     {
         # region variables
         // The thread inside which the Page Names display happens
@@ -42,7 +42,7 @@ namespace DownloadManager
         bool tmp = false;
         bool blnDisplayPagesDone = false;
         # endregion
-        public Form3()
+        public eMat()
         {
             InitializeComponent();
         }

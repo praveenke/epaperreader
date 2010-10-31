@@ -1,7 +1,7 @@
 
 namespace DownloadManager
 {
-    partial class Form3
+    partial class eMat
     {
         /// <summary>
         /// Required designer variable.
@@ -29,14 +29,14 @@ namespace DownloadManager
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form3));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(eMat));
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button2 = new System.Windows.Forms.Button();
             this.lblProgress = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.prgDownload = new System.Windows.Forms.ProgressBar();
             this.button1 = new System.Windows.Forms.Button();
             this.axAcroPDF1 = new AxAcroPDFLib.AxAcroPDF();
-            this.button2 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.axAcroPDF1)).BeginInit();
             this.SuspendLayout();
@@ -60,6 +60,19 @@ namespace DownloadManager
             this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             this.panel1.MouseHover += new System.EventHandler(this.panel1_MouseHover);
             // 
+            // button2
+            // 
+            this.button2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button2.ForeColor = System.Drawing.SystemColors.Window;
+            this.button2.Location = new System.Drawing.Point(6, 8);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(51, 23);
+            this.button2.TabIndex = 15;
+            this.button2.Text = "Exit";
+            this.button2.UseVisualStyleBackColor = false;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // lblProgress
             // 
             this.lblProgress.AutoSize = true;
@@ -77,9 +90,9 @@ namespace DownloadManager
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(57, 8);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(116, 20);
+            this.label1.Size = new System.Drawing.Size(118, 20);
             this.label1.TabIndex = 11;
-            this.label1.Text = "Pages for...[" + System.DateTime.Now.Day + "/" + System.DateTime.Now.Month + "/" + System.DateTime.Now.Year + " " + System.DateTime.Now.DayOfWeek + "]";
+            this.label1.Text = "Pages for...[// ]";
             // 
             // prgDownload
             // 
@@ -110,27 +123,14 @@ namespace DownloadManager
             this.axAcroPDF1.Size = new System.Drawing.Size(990, 192);
             this.axAcroPDF1.TabIndex = 2;
             // 
-            // button2
-            // 
-            this.button2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.ForeColor = System.Drawing.SystemColors.Window;
-            this.button2.Location = new System.Drawing.Point(6, 8);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(51, 23);
-            this.button2.TabIndex = 15;
-            this.button2.Text = "Exit";
-            this.button2.UseVisualStyleBackColor = false;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // Form3
+            // eMat
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1207, 503);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.axAcroPDF1);
-            this.Name = "Form3";
+            this.Name = "eMat";
             this.Text = "Form3";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form3_Load);
