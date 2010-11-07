@@ -37,6 +37,7 @@ namespace DownloadManager
         private delegate void AddControlCallback(Control parent, Control ctrl);
         private delegate void DisplayLinkLabelCallback(string FilePath, int DownloadCount);
         private delegate void UpdateTextBoxCallback(string text);
+        private delegate void GetSelectedCategoryCallback();
         string strURL = string.Empty;
         string strPath = string.Empty;
         bool tmp = false;
@@ -46,24 +47,55 @@ namespace DownloadManager
         {
             InitializeComponent();
         }
+        private bool _bFullScreenMode = false;
         private void Form3_Load(object sender, EventArgs e)
         {
-            this.panel1.Height = 70;
-            this.FormBorderStyle = FormBorderStyle.None;
+            this.Left = (Screen.PrimaryScreen.Bounds.Width / 2 - this.Width / 2);
+            this.Top = 10;
+            this.label1.Text = "Pages for...[" + System.DateTime.Now.Day + "/" + System.DateTime.Now.Month + "/" + System.DateTime.Now.Year + " " + System.DateTime.Now.DayOfWeek + "]";
+            this.panel1.Height = 80;
+            this.panel1.Width = this.Width;
+            this.panel1.Left = 5;
+            this.axAcroPDF1.Size = new System.Drawing.Size(this.Width - 20, this.Height);
+            //this.FormBorderStyle = FormBorderStyle.None;
             axAcroPDF1.Width = this.Width;
             axAcroPDF1.Height = this.Height;
-            axAcroPDF1.Top = 0;
-            axAcroPDF1.Left = 0;
+            axAcroPDF1.Top = 30;
+            axAcroPDF1.Left = 10;
             //axAcroPDF1.src = @"E:\Projects\epaperreader\MAT\bin\Release\Mathrubhoomi\2010-Oct-16_01_Dai_16558.pdf";            
             thrDisplayPageNames = new Thread(DisplayPageNames);
-            thrDisplayPageNames.Start();        
+            thrDisplayPageNames.Start();
+            this.panel1.TabStop = false;
+            axAcroPDF1.TabStop = false;
+            this.panel1.TabIndex = 0;
+            axAcroPDF1.TabIndex = 0;
+            axAcroPDF1.CausesValidation = false;
+            this.KeyPreview = true;
+            this.Focus();
         }
         #region DisplayPageNames
         bool GotIt = false;
         ArrayList arrswfFiles = new ArrayList();
         string divs = string.Empty;
+        int iSelectedCategory = 0;
+
+        void InitializeValues()
+        {
+            GotIt = false;
+            arrswfFiles = new ArrayList();
+            divs = string.Empty;
+            iSelectedCategory = 0;
+            strURL = string.Empty;
+            strPath = string.Empty;
+            tmp = false;
+            blnDisplayPagesDone = false;
+            DownloadCount = 0;            
+            strPDFFileToDownLoad = string.Empty;
+            blnSelectAll = false;
+        }
         void DisplayPageNames()
         {
+            string strURL1 = string.Empty;    
             GotIt = false;
             string twodigitday = DateTime.Now.Day.ToString().Length == 1 ? "0" + DateTime.Now.Day.ToString() : DateTime.Now.Day.ToString();
             string twodigitmonth = DateTime.Now.Month.ToString().Length == 1 ? "0" + DateTime.Now.Month.ToString() : DateTime.Now.Month.ToString();
@@ -71,7 +103,39 @@ namespace DownloadManager
 
             try
             {
-                WebRequest request = HttpWebRequest.Create("http://epaper.mathrubhumi.com/index.php?cat=14&pdf=Y&date=" + datestring);
+                this.Invoke(new GetSelectedCategoryCallback(this.GetSelectedCategory), new object[] {});
+                if (iSelectedCategory == 0)
+                    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=14&pdf=Y&date=" + datestring;
+                else if (iSelectedCategory == 1)
+                    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=1&pdf=Y&date=" + GetDateString(iSelectedCategory);
+                else if (iSelectedCategory == 2)
+                    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=2&pdf=Y&date=" + GetDateString(iSelectedCategory);
+                else if (iSelectedCategory == 3)
+                    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=3&pdf=Y&date=" + datestring;
+                else if (iSelectedCategory == 4)
+                    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=5&pdf=Y&date=" + datestring;
+                else if (iSelectedCategory == 5)
+                    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=7&pdf=Y&date=" + datestring;
+                else if (iSelectedCategory == 6)
+                    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=8&pdf=Y&date=" + datestring;
+                else if (iSelectedCategory == 7)
+                    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=10&pdf=Y&date=" + datestring;
+                else if (iSelectedCategory == 8)
+                    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=12&pdf=Y&date=" + datestring;
+                else if (iSelectedCategory == 9)
+                    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=15&pdf=Y&date=" + datestring;
+                else if (iSelectedCategory == 10)
+                    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=18&pdf=Y&date=" + GetDateString(iSelectedCategory);
+                else if (iSelectedCategory == 11)
+                    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=19&pdf=Y&date=" + datestring;
+                else if (iSelectedCategory == 12)
+                    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=6&pdf=Y&date=" + datestring;
+                else if (iSelectedCategory == 13)
+                    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=21&pdf=Y&date=" + datestring;
+                else if (iSelectedCategory == 14)
+                    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=22&pdf=Y&date=" + datestring;
+
+                WebRequest request = HttpWebRequest.Create(strURL1);
                 WebResponse response = request.GetResponse();
                 Stream stream = response.GetResponseStream();
                 HtmlParser.HtmlDocument document = HtmlParser.HtmlDocument.Create(stream);
@@ -89,6 +153,70 @@ namespace DownloadManager
                 thrDisplayPageNames.Abort();
             }
 
+        }
+        string GetDateString(int iSelectedCategory)
+        {
+            string datestring;
+            string twodigitday = DateTime.Now.Day.ToString().Length == 1 ? "0" + DateTime.Now.Day.ToString() : DateTime.Now.Day.ToString();
+            string twodigitmonth = DateTime.Now.Month.ToString().Length == 1 ? "0" + DateTime.Now.Month.ToString() : DateTime.Now.Month.ToString();
+            datestring= DateTime.Now.Year + "-" + twodigitmonth + "-" + twodigitday;
+            if (iSelectedCategory == 1)
+            {
+                if(DateTime.Now.DayOfWeek.ToString().ToUpper()=="SUNDAY")
+                    datestring = DateTime.Now.Year + "-" + twodigitmonth + "-" + twodigitday;
+            }
+            else if (iSelectedCategory == 2)
+            {
+                if (DateTime.Now.DayOfWeek.ToString().ToUpper() == "MONDAY")
+                    datestring = DateTime.Now.Year + "-" + twodigitmonth + "-" + twodigitday;
+                else
+                {
+                    datestring = GetLastDaysDate("MONDAY", Convert.ToDateTime(datestring)).ToString();
+                }                
+            }
+            //else if (iSelectedCategory == 3)
+            //    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=3&pdf=Y&date=" + datestring;
+            //else if (iSelectedCategory == 4)
+            //    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=5&pdf=Y&date=" + datestring;
+            //else if (iSelectedCategory == 5)
+            //    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=7&pdf=Y&date=" + datestring;
+            //else if (iSelectedCategory == 6)
+            //    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=8&pdf=Y&date=" + datestring;
+            //else if (iSelectedCategory == 7)
+            //    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=10&pdf=Y&date=" + datestring;
+            //else if (iSelectedCategory == 8)
+            //    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=12&pdf=Y&date=" + datestring;
+            //else if (iSelectedCategory == 9)
+            //    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=15&pdf=Y&date=" + datestring;
+            else if (iSelectedCategory == 10)
+            {
+                datestring = "2010-02-13";                
+            }                
+            //else if (iSelectedCategory == 11)
+            //    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=19&pdf=Y&date=" + datestring;
+            //else if (iSelectedCategory == 12)
+            //    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=6&pdf=Y&date=" + datestring;
+            //else if (iSelectedCategory == 13)
+            //    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=21&pdf=Y&date=" + datestring;
+            //else if (iSelectedCategory == 14)
+            //    strURL1 = "http://epaper.mathrubhumi.com/index.php?cat=22&pdf=Y&date=" + datestring;
+            return datestring;
+        }
+        string GetLastDaysDate(string DayOfWeek,DateTime datetime)
+        {            
+            for (int i = 1; i <= 6; i++)
+            {
+                datetime = datetime.AddDays(Convert.ToDouble("-" + i));
+                if (datetime.DayOfWeek.ToString().ToUpper() == DayOfWeek)
+                {
+                    break;
+                }
+            }
+            string datestring=string.Empty;
+            string twodigitday = datetime.Day.ToString().Length == 1 ? "0" + datetime.Day.ToString() : datetime.Day.ToString();
+            string twodigitmonth = datetime.Month.ToString().Length == 1 ? "0" + datetime.Month.ToString() : datetime.Month.ToString();
+            datestring = datetime.Year + "-" + twodigitmonth + "-" + twodigitday;
+            return datestring;
         }
         void GetContainerDIV(HtmlNodeCollection nodes)
         {
@@ -118,7 +246,7 @@ namespace DownloadManager
             CheckBox ChkPageName;
             //use the urls from arrswfFiles to generate lls
             //also add event handler to invokde clicked events
-            int locationX = 0;
+            int locationX = 15;
             int LocationY = 40;
             int PageNo = 0;
             for (int i = 0; i < arrswfFiles.Count; i++)
@@ -209,6 +337,10 @@ namespace DownloadManager
         void AddControl(Control parent, Control ctrl)
         {
             parent.Controls["panel1"].Controls.Add(ctrl);
+        }
+        void GetSelectedCategory()
+        {
+            iSelectedCategory = listBox1.SelectedIndex==-1?0:listBox1.SelectedIndex;
         }
         #endregion
         #region Download
@@ -384,8 +516,13 @@ namespace DownloadManager
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             LinkLabel objLinkLabel = (LinkLabel)sender;
-            //System.Diagnostics.Process.Start(objLinkLabel.Name.ToString());
             axAcroPDF1.src = objLinkLabel.Name.ToString();
+            this.panel1.TabStop = false;
+            axAcroPDF1.TabStop = false;
+            this.panel1.TabIndex = 0;
+            axAcroPDF1.TabIndex = 0;
+            this.KeyPreview = true;
+            this.Focus();
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -403,7 +540,7 @@ namespace DownloadManager
         private void panel1_MouseHover(object sender, EventArgs e)
         {
             //MessageBox.Show(sender.ToString());            
-            this.panel1.Height = 70;
+            this.panel1.Height = 80;
         }
         private void panel1_MouseMove(object sender, MouseEventArgs e)
         {
@@ -420,10 +557,96 @@ namespace DownloadManager
         {
 
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
             Application.Exit();
-        }        
+        }
+        private void Form3_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.F11)
+            {
+                if (_bFullScreenMode == false)
+                {
+                    this.WindowState = FormWindowState.Maximized;
+                    this.FormBorderStyle = FormBorderStyle.None;                    
+                    _bFullScreenMode = true;
+                }
+                else
+                {
+                    this.Left = (Screen.PrimaryScreen.Bounds.Width / 2 - this.Width / 2);
+                    this.Top = 10;
+                    this.WindowState = FormWindowState.Normal;
+                    this.FormBorderStyle = FormBorderStyle.Sizable;
+                    _bFullScreenMode = false;
+                }
+            }
+            this.axAcroPDF1.Size = new System.Drawing.Size(this.Width-20,this.Height);
+            this.axAcroPDF1.Width = this.Width;
+            this.panel1.Width = this.Width;
+        }
+        bool blnSelectAll = false;
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (blnSelectAll == false)
+            {
+                SelectAll();
+                
+            }
+            else
+            {
+                DeSelectAll();
+            }
+        }
+        private void SelectAll()
+        {     
+            for (int i = 0; i < arrswfFiles.Count; i++)
+            {         
+                CheckBox chkTemp = this.Controls["panel1"].Controls["chk" + (i + 1).ToString()] != null ? (CheckBox)this.Controls["panel1"].Controls["chk" + (i + 1).ToString()] : null;
+                if ((chkTemp != null) && (chkTemp.Checked == false))
+                {
+                    chkTemp.Checked = true;
+                }         
+            }
+            blnSelectAll = true;
+        }
+        private void DeSelectAll()
+        {
+            for (int i = 0; i < arrswfFiles.Count; i++)
+            {
+                CheckBox chkTemp = this.Controls["panel1"].Controls["chk" + (i + 1).ToString()] != null ? (CheckBox)this.Controls["panel1"].Controls["chk" + (i + 1).ToString()] : null;
+                if ((chkTemp != null) && (chkTemp.Checked == true))
+                {
+                    chkTemp.Checked = false;
+                }
+            }
+            blnSelectAll = false;
+        }
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Form3_KeyUp(new object(), new System.Windows.Forms.KeyEventArgs(Keys.F11));
+        }
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ClearPageNames();
+            InitializeValues();            
+            thrDisplayPageNames = new Thread(DisplayPageNames);
+            thrDisplayPageNames.Start();
+        }
+        void ClearPageNames()
+        {
+            int PageNo = 0;
+            for (int i = 0; i < arrswfFiles.Count; i++)
+            {               
+               PageNo = i + 1;
+               Control[] chkCtrls= this.Controls.Find("chk" + PageNo.ToString(), true);
+               Control[] lblCtrls = this.Controls.Find(PageNo.ToString(), true);
+               panel1.Controls.Remove(chkCtrls[0]);
+               if(chkCtrls.Length==2)
+                   panel1.Controls.Remove(chkCtrls[1]);
+               panel1.Controls.Remove(lblCtrls[0]);
+               if (lblCtrls.Length == 2)
+                   panel1.Controls.Remove(lblCtrls[1]);     
+            }
+        }
     }
 }
