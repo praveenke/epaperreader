@@ -541,18 +541,18 @@ namespace DownloadManager
         {
             //MessageBox.Show(sender.ToString());            
             this.panel1.Height = 80;
+            this.axAcroPDF1.Top = 30;
         }
         private void panel1_MouseMove(object sender, MouseEventArgs e)
         {
             //MessageBox.Show(e.Y.ToString());
             //label1.Text = e.Y.ToString();
-            if(e.Y>65)
+            if (e.Y > 65)
+            {
                 this.panel1.Height = 10;
-        }
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
+                this.axAcroPDF1.Top = 30;
+            }
+        }      
         private void lblProgress_Click(object sender, EventArgs e)
         {
 
@@ -582,6 +582,7 @@ namespace DownloadManager
             }
             this.axAcroPDF1.Size = new System.Drawing.Size(this.Width-20,this.Height);
             this.axAcroPDF1.Width = this.Width;
+            this.axAcroPDF1.Top=30;
             this.panel1.Width = this.Width;
         }
         bool blnSelectAll = false;

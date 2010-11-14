@@ -63,7 +63,7 @@ namespace DownloadManager
             this.panel1.Size = new System.Drawing.Size(1222, 179);
             this.panel1.TabIndex = 1;
             this.panel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseMove);
-            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            
             this.panel1.MouseHover += new System.EventHandler(this.panel1_MouseHover);
             // 
             // button2
